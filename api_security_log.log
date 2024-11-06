@@ -1,2 +1,21 @@
 2024-11-05 22:30:01,956  * Debugger is active!
 2024-11-05 22:30:01,956  * Debugger PIN: 115-495-136
+2024-11-06 22:05:30,193 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:3000
+ * Running on http://10.0.0.168:3000
+2024-11-06 22:05:30,193 [33mPress CTRL+C to quit[0m
+2024-11-06 22:05:30,194  * Restarting with stat
+2024-11-06 22:05:30,469  * Debugger is active!
+2024-11-06 22:05:30,470  * Debugger PIN: 120-466-968
+2024-11-06 22:05:37,871 127.0.0.1 - - [06/Nov/2024 22:05:37] "GET / HTTP/1.1" 200 -
+2024-11-06 22:05:38,063 127.0.0.1 - - [06/Nov/2024 22:05:38] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2024-11-06 22:13:16,761 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:3000
+ * Running on http://10.0.0.168:3000
+2024-11-06 22:13:16,762 [33mPress CTRL+C to quit[0m
+2024-11-06 22:13:16,762  * Restarting with stat
+2024-11-06 22:13:17,046  * Debugger is active!
+2024-11-06 22:13:17,047  * Debugger PIN: 120-466-968
+2024-11-06 22:13:20,095 127.0.0.1 - - [06/Nov/2024 22:13:20] "GET / HTTP/1.1" 200 -
