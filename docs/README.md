@@ -1,18 +1,22 @@
 # Flask PWA - API Extension Task
 
-This task is to build a safe API that extends the [Flask PWA - Programming for the Web Task](https://github.com/TempeHS/Flask_PWA_Programming_For_The_Web_Task_Template). From the parent task, students will abstract the database and management to an API. The PWA will then be retooled to GET request the data from the API and POST request data to to API. The PWA UI for the API will be rapidly prototyped using the [Bootstrap](https://getbootstrap.com/) frontend framework.
+This task is to build a safe API that extends the [Flask PWA - Programming for the Web Task](https://github.com/TempeHS/Flask_PWA_Programming_For_The_Web_Task_Template). From the parent task, students will abstract the database and management to an API with key authentication. The PWA will then be retooled to GET request the data from the API and POST request data to the API. The PWA UI for the API will be rapidly prototyped using the [Bootstrap](https://getbootstrap.com/) frontend framework.
+
+The API instructions focus on modelling how to build and test an API incrementally. The PWA instructions focus on using the [Bootstrap](https://getbootstrap.com/) frontend framework to prototype an enhanced UI/UX frontend rapidly using [Bootstrap](https://getbootstrap.com/) components and classes.
 
 > [!note]
 > The template for this project has been pre-populated with assets from the Flask PWA task, including the logo, icons and .database. Students can migrate their own assets if they wish.
 
 ## Dependencies
 
-- VSCode, docker, or GitHub Codespaces
-- Python 3+
-- [SQLite3 Editor](https://marketplace.visualstudio.com/items?itemName=yy0931.vscode-sqlite3-editor)
-- [Start git-bash](https://marketplace.visualstudio.com/items?itemName=McCarter.start-git-bash)
-- [Thunder Client](https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client)
-- pip/pip3 installs
+## Requirements
+
+1. [VSCode](https://code.visualstudio.com/download) or [GitHub Codespaces](https://github.com/features/codespaces)
+2. [Python 3.x](https://www.python.org/downloads/)
+3. [GIT 2.x.x +](https://git-scm.com/downloads)
+4. [SQLite3 Editor](https://marketplace.visualstudio.com/items?itemName=yy0931.vscode-sqlite3-editor)
+5. [Start git-bash](https://marketplace.visualstudio.com/items?itemName=McCarter.start-git-bash) 6.[Thunder Client](https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client)
+6. pip/pip3 installs
 
 ```bash
     pip install Flask
@@ -24,9 +28,17 @@ This task is to build a safe API that extends the [Flask PWA - Programming for t
 ```
 
 > [!Important]
-> These instructions are less verbose than the parent task because students are expected to now be familiar with Bash, Flask & SQLite3. The focus of the API instructions is to model how to build and test an API incrementally. The focus of the PWA instructions is how to use the [Bootstrap](https://getbootstrap.com/) frontend framework to prototype an enhanced UI/UX frontend rapidly.
+> MacOS and Linux users may have a `pip3` soft link instead of `pip`, run the below commands to see what path your system is configured with and use that command through the project. If neither command returns a version, then likely [Python 3.x](https://www.python.org/downloads/) needs to be installed.
+>
+> ```bash
+> pip show pip
+> pip3 show pip
+> ```
 
 ## Instructions for building the API
+
+> [!Warning]
+> These instructions are less verbose than the parent task because students are expected to be now familiar with Bash, Flask & SQLite3.
 
 ### Step 1: Learn the basics of implementing an API in Flask
 
@@ -79,8 +91,8 @@ Students can create files as they are needed. This structure defines the correct
 This Python implementation in 'api.py':
 
 1. Imports all the required dependencies for the whole project.
-2. Configures the 'Cross Origin Request' policy.
-3. Configures the rate limiter.
+2. Configure the 'Cross Origin Request' policy.
+3. Configure the rate limiter.
 4. Configure a route for the root `/` with a GET method to return stub data and a 200 response.
 5. Configure a route to /add_extension with a POST method to return stub data and a 201 response.
 
@@ -120,7 +132,7 @@ def post():
 
 
 if __name__ == "__main__":
-    api.run(debug=True, host="0.0.0.0", port=1000)
+    api.run(debug=True, host="0.0.0.0", port=3000)
 ```
 
 ### Step 3: Test your basic API with Thunder Client
@@ -133,7 +145,7 @@ Extend the `get():` method in `api.py` to get data from the database via the `db
 
 ```python
 def get():
-    content = dbHandler.extension_get("*")
+    content = dbHandler.extension_get("%")
     return (content), 200
 ```
 
@@ -152,7 +164,7 @@ from jsonschema import validate
 from flask import current_app
 
 
-def extension_get():
+def extension_get(lang):
     con = sql.connect(".database/data_source.db")
     cur = con.cursor()
     cur.execute("SELECT * FROM extension")
@@ -255,7 +267,7 @@ Update the `extension_add():` method in `database_manager.py` to validate the JS
 2. No extra properties are allowed.
 3. The data type for all 5 properties is string.
 4. The hyperlink pattern enforces the URL to start with `https://marketplace.visualstudio.com/items?itemName=`, and the characters `<` and `>` are not allowed to prevent XXS attacks.
-5. The image pattern requires https but `<` and `>` are not allowed to prevent XXS attacks.
+5. The image pattern requires https:// but `<` and `>` are not allowed to prevent XXS attacks.
 6. Languages must be enumerated with the list of languages.
 
 > [!Important]
@@ -297,7 +309,6 @@ schema = {
     "additionalProperties": False,
 }
 
-
 def validate_json(json_data):
     try:
         validate(instance=json_data, schema=schema)
@@ -306,7 +317,7 @@ def validate_json(json_data):
         return False
 ```
 
-Sample JSON data to test the API:
+Sample JSON data for you to test the API:
 
 ```text
 {"name": "test", "hyperlink": "https://marketplace.visualstudio.com/items?itemName=123.html", "about": "This is a test", "image": "https://test.jpg", "language": "BASH"}
@@ -314,11 +325,11 @@ Sample JSON data to test the API:
 
 ### Step 10: Test your validation POST response
 
-![Screen recording testing a API basic POST with Thunder Client](/docs/README_resources/test_basic_POST_API.gif "Follow these steps to test your basic POST API")
+![Screen recording testing a API basic POST with Thunder Client](/docs/README_resources/test_POST_API_Auth.gif "Follow these steps to test your basic POST API")
 
 ### Step 11: Insert the POST data into the database
 
-Update the `extension_add():` method in database_manager.py`to INSERT the JSON data into the database. The`extID` is not required as it has been configured to auto increment in the database.
+Update the `extension_add():` method in database_manager.py` to INSERT the JSON data into the database. The `extID` is not required as it has been configured to auto increment in the database table.
 
 ```python
 def extension_add(data):
@@ -344,15 +355,15 @@ def extension_add(data):
 
 ### Step 12: Implement POST Authorisation
 
-[API Key Authorisation](https://cloud.google.com/endpoints/docs/openapi/when-why-api-key) is a common method to authorise an application, site or project as in this scenario the API is not authorising a specific user. This is a very simple implementation of API Key Authorisation.
+[API Key Authorisation](https://cloud.google.com/endpoints/docs/openapi/when-why-api-key) is a common method for authorising an application, site, or project. In this scenario, the API is not authorising a specific user. This is a very simple implementation of API Key Authorisation.
 
-Extend the `api.py` to store teh key as a variable. Students will need to generate a unique basic 16 secret key with [https://acte.ltd/utils/randomkeygen](https://acte.ltd/utils/randomkeygen).
+Extend the `api.py` to store the key as a variable. Students will need to generate a unique basic 16 secret key with [https://acte.ltd/utils/randomkeygen](https://acte.ltd/utils/randomkeygen).
 
 ```python
 auth_key = "4L50v92nOgcDCYUM"
 ```
 
-Extend the `def post():` method in `app.py` to request the `authorisation` attribute from the post head compare it to the `auth_key` then process the appropriate response.
+Extend the `def post():` method in `api.py` to request the `authorisation` attribute from the post head, compare it to the `auth_key,` and process the appropriate response.
 
 ```python
 def post():
@@ -361,10 +372,10 @@ def post():
         response = dbHandler.extension_add(data)
         return response
     else:
-        return {"error": "Unauthorized"}, 401
+        return {"error": "Unauthorised"}, 401
 ```
 
-### Step 13: Test your authorization for a POST response
+### Step 13: Test your authorisation for a POST response
 
 ![Screen recording testing a API basic POST with Thunder Client](/docs/README_resources/test_POST_API_Auth.gif "Follow these steps to test your POST API Authorisation")
 
@@ -373,7 +384,7 @@ def post():
 Extend the `api.py` with the implementation below, which should be inserted directly below the `imports`. This will configure the logger to log to a file for security analysis.
 
 ```python
-app_log = logging.getLogger(__name__)
+api_log = logging.getLogger(__name__)
 logging.basicConfig(
     filename="api_security_log.log",
     encoding="utf-8",
@@ -426,8 +437,9 @@ This Jinga2/HTML implementation in layout.html:
     <link href="static/css/bootstrap.min.css" rel="stylesheet" />
   </head>
   <body>
-    {% include "partials/menu.html" %} {% block content %}{% endblock %} {%
-    include "partials/footer.html" %}
+    {% include "partials/menu.html" %}
+    <main>{% block content %}{% endblock %}</main>
+    {% include "partials/footer.html" %}
     <script src="static/js/bootstrap.bundle.min.js"></script>
     <script src="static/js/serviceWorker.js"></script>
     <script src="static/js/app.js"></script>
@@ -609,7 +621,7 @@ Insert the basic HTML into index.html.
 This Python Flask implementation in `main.py`
 
 1. Imports all dependencies required for the whole project.
-2. Sets up CSRFProtect to provide asynchronous keys that protect the app from a CSRF attack. Students will need to generate a unique basic 16 secret key with [https://acte.ltd/utils/randomkeygen](https://acte.ltd/utils/randomkeygen).
+2. Set up CSRFProtect to provide asynchronous keys that protect the app from a CSRF attack. Students will need to generate a unique basic 16 secret key with [https://acte.ltd/utils/randomkeygen](https://acte.ltd/utils/randomkeygen).
 3. Defines the head attribute for authorising a POST request to the API.
 4. Define a secure Content Secure Policy (CSP) head.
 5. Configures the Flask app.
@@ -661,9 +673,9 @@ def index():
 
 
 @app.route("/csp_report", methods=["POST"])
+@csrf.exempt
 def csp_report():
-    with open("csp_reports.log", "a") as fh:
-        fh.write(request.data.decode() + "\n")
+    app.logger.critical(request.data.decode())
     return "done"
 
 
@@ -817,23 +829,24 @@ The HTML Implementation in `add.html`
   <div class="row">
     <form action="/add.html" method="POST" class="box">
       <div class="col-auto">
-        <label for="ExtensionName" class="form-label">Extension name</label>
+        <label for="name" class="form-label">Extension name</label>
         <textarea
-          class="form-control"
-          name="name"
           id="name"
+          name="name"
+          class="form-control"
           rows="1"
+          autocomplete="off"
         ></textarea>
       </div>
       <div class="col-auto">
-        <label name="hyperlink" class="form-label"
+        <label for="hyperlink" name="hyperlink" class="form-label"
           >Hyperlink to extension</label
         >
         <input
+          id="hyperlink"
           name="hyperlink"
           type="url"
           class="form-control"
-          id="hyperlink"
           placeholder="https://marketplace.visualstudio.com/items?itemName="
           pattern="^https:\/\/marketplace\.visualstudio\.com\/items\?itemName=(?!.*[<>])[a-zA-Z0-9\-._~:\/?#\[\]@!$&'()*+,;=]*$"
         />
@@ -841,36 +854,36 @@ The HTML Implementation in `add.html`
       <div class="col-auto">
         <label for="about" class="form-label">About</label>
         <textarea
-          class="form-control"
-          name="about"
           id="about"
+          name="about"
+          class="form-control"
           rows="3"
           placeholder="A brief description of the extension"
         ></textarea>
       </div>
       <div class="col-auto">
-        <label name="image" class="form-label">URL to Icon</label>
+        <label for="name" name="image" class="form-label">URL to Icon</label>
         <input
+          id="image"
           name="image"
           type="url"
           class="form-control"
-          id="image"
           pattern="^https:\/\/(?!.*[<>])[a-zA-Z0-9\-._~:\/?#\[\]@!$&'()*+,;=]*$"
           placeholder="https://"
         />
       </div>
       <div class="col-auto">
-        <label name="exampleFormControlInput1" class="form-label"
+        <label for="language" name="language" class="form-label"
           >Programming language</label
         >
         <select
-          name="language"
           id="language"
+          name="language"
           class="form-select"
           aria-label="Default select language"
         >
           <option selected>Select a language from this menu</option>
-          <option value="Python">PYTHON</option>
+          <option value="PYTHON">PYTHON</option>
           <option value="CPP">CPP</option>
           <option value="BASH">BASH</option>
           <option value="SQL">SQL</option>
@@ -892,8 +905,10 @@ The HTML Implementation in `add.html`
 
 Extend `main.py' to provide a route with POST and GET methods for `add.html` that
 
-1. Render `add.html` on GET request with any errors or messages passed as data.
-2.
+1. Renders `add.html` on GET requests.
+2. On a POST method, read the form in add.html and construct a JSON.
+3. Then, POST the JSON with the header that includes the Authentication key to the API.
+4. Render `add.html` with any errors or messages from the API.
 
 ```python
 @app.route("/add.html", methods=["POST", "GET"])
@@ -911,6 +926,7 @@ def form():
             "image": image,
             "language": language,
         }
+        app.logger.critical(data)
         try:
             response = requests.post(
                 "http://127.0.0.1:3000/add_extension",
@@ -923,4 +939,68 @@ def form():
         return render_template("/add.html", data=data)
     else:
         return render_template("/add.html", data={})
+```
+
+### Step 13: Add event listeners to the `/` page for the buttons to filter the extensions by language.
+
+Extend `app.js` with a script to provide functionality to the home page buttons.
+
+```js
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.location.pathname === "/") {
+    const buttons = [
+      { id: "all", url: "/" },
+      { id: "python", url: "?lang=python" },
+      { id: "cpp", url: "?lang=cpp" },
+      { id: "bash", url: "?lang=bash" },
+      { id: "sql", url: "?lang=sql" },
+      { id: "html", url: "?lang=html" },
+      { id: "css", url: "?lang=css" },
+      { id: "js", url: "?lang=javascript" },
+    ];
+
+    buttons.forEach((button) => {
+      const element = document.getElementById(button.id);
+      if (element) {
+        element.addEventListener("click", function () {
+          window.location.href = button.url;
+        });
+      }
+    });
+  }
+});
+```
+
+### Step 14: Forward the GET request argument to the API to filter extensions by language.
+
+```python
+    url = "http://127.0.0.1:3000"
+    if request.args.get("lang") and request.args.get("lang").isalpha():
+        lang = request.args.get("lang")
+        url += f"?lang={lang}"
+```
+
+### 15: Configure the logger to log to main_security_log.log
+
+Extend the `main.py` with the implementation below, which should be inserted directly below the `imports`. This will configure the logger to log to a file for security analysis.
+
+```python
+app_log = logging.getLogger(__name__)
+logging.basicConfig(
+    filename="main_security_log.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
+```
+
+## Extension activities to improve the API and PWA.
+
+1. Create a get_languages method that returns all the languages in the database.
+2. Improve exception handling of the `add_extension` endpoint to give more detailed feedback to the user.
+3. Use the new get-languages method to define the content that renders in the PWA.
+4. Implement a sort extension by function
+
+```
+
 ```
